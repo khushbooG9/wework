@@ -1,3 +1,36 @@
+<?php
+  include("config.php");
+  session_start();
+  $error = "";
+   
+   if($_SERVER["REQUEST_METHOD"] == "POST") {
+      // username and password sent from form 
+      
+      $myusername = mysqli_real_escape_string($db,$_POST['username']);
+      $mypassword = mysqli_real_escape_string($db,$_POST['password']); 
+      
+      $sql = "SELECT id FROM admin WHERE username = '$myusername' and passcode = '$mypassword'";
+      $result = mysqli_query($db,$sql);
+      $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+      //$active = $row['active'];
+      
+      $count = mysqli_num_rows($result);
+      
+      // If result matched $myusername and $mypassword, table row must be 1 row
+      
+      if($count == 1) {
+         
+         $_SESSION['login_user'] = $myusername;
+         
+         header("location: account-home.php");
+      }
+
+
+      else {
+         $error = "Your Login Name or Password is invalid";
+      }
+   }
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -96,17 +129,17 @@
               <h3>
                 Login
               </h3>
-              <form role="form" class="login-form">
+              <form role="form" class="login-form" action="" method="post">
                 <div class="form-group">
                   <div class="input-icon">
                     <i class="icon fa fa-user"></i>
-                    <input type="text" id="sender-email" class="form-control" name="email" placeholder="Username">
+                    <input type="text" id="sender-email" class="form-control" name="username" placeholder="Username">
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="input-icon">
                     <i class="icon fa fa-unlock-alt"></i>
-                    <input type="password" class="form-control" placeholder="Password">
+                    <input type="password" class="form-control" placeholder="Password" name="password">
                   </div>
                 </div>
                 <div class="checkbox">

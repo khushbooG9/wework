@@ -1,267 +1,193 @@
+<?php 
+session_start();
+include("ConnectToAWS.php");
+if($_SESSION['login-status'] != 1) {
+         alert("Please login");
+         header("location: login.php");
+  }
+
+
+$sql = "SELECT * FROM wework.job WHERE status='AVAILABLE'";
+$result=mysqli_query($db,$sql);
+$i=0;
+while($row=$result->fetch_assoc()){
+  $row_array[$i]['jobid']=$row['id'];
+  $row_array[$i]['poster_id']=$row['poster_id'];
+  $row_array[$i]['category_id']=$row['category_id'];
+  $row_array[$i]['city_id']=$row['city_id'];
+  $row_array[$i]['title']=$row['title'];
+  $row_array[$i]['wage']=$row['wage'];
+  $row_array[$i]['description']=$row['description'];
+  $i++;
+}
+
+
+$userid=$_SESSION['user_id'];
+
+$sql2="SELECT balance FROM user where id='$userid'"; 
+$balance = mysqli_query($db,$sql2)->fetch_object()->balance;
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">    
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Clasified">
-    <meta name="generator" content="Wordpress! - Open Source Content Management">
-    <title>Postiong success | Bootstrap HTML5 Classified Template</title>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Welcome | WeWork</title>
+      <link rel="shortcut icon" href="assets/img/favicon.png">
+      <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/material-kit.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
+      <link rel="stylesheet" href="assets/fonts/line-icons/line-icons.css" type="text/css">
+      <link rel="stylesheet" href="assets/fonts/line-icons/line-icons.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/main.css" type="text/css">
+      <link rel="stylesheet" href="assets/extras/animate.css" type="text/css">
+      <link rel="stylesheet" href="assets/extras/owl.carousel.css" type="text/css">
+      <link rel="stylesheet" href="assets/extras/owl.theme.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/responsive.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/slicknav.css" type="text/css">
+      <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+      <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+      <link rel="apple-touch-icon" sizes="57x57" href="assets/fav/apple-icon-57x57.png">
+      <link rel="apple-touch-icon" sizes="60x60" href="assets/fav/apple-icon-60x60.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="assets/fav/apple-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="76x76" href="assets/fav/apple-icon-76x76.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="assets/fav/apple-icon-114x114.png">
+      <link rel="apple-touch-icon" sizes="120x120" href="assets/fav/apple-icon-120x120.png">
+      <link rel="apple-touch-icon" sizes="144x144" href="assets/fav/apple-icon-144x144.png">
+      <link rel="apple-touch-icon" sizes="152x152" href="assets/fav/apple-icon-152x152.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="assets/fav/apple-icon-180x180.png">
+      <link rel="icon" type="image/png" sizes="192x192"  href="assets/fav/android-icon-192x192.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="assets/fav/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="96x96" href="assets/fav/favicon-96x96.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="assets/fav/favicon-16x16.png">
+      <link rel="manifest" href="assets/fav/manifest.json">
+      <meta name="msapplication-TileColor" content="#ffffff">
+      <meta name="msapplication-TileImage" content="assets/fav/ms-icon-144x144.png">
+      <meta name="theme-color" content="#ffffff">
 
-     <!-- Favicon -->
-    <link rel="shortcut icon" href="assets/img/favicon.png">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">    
-    <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
-    <!-- Material CSS -->
-    <link rel="stylesheet" href="assets/css/material-kit.css" type="text/css">
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css">
-        <!-- Line Icons CSS -->
-    <link rel="stylesheet" href="assets/fonts/line-icons/line-icons.css" type="text/css">
-    <!-- Line Icons CSS -->
-    <link rel="stylesheet" href="assets/fonts/line-icons/line-icons.css" type="text/css">
-    <!-- Main Styles -->
-    <link rel="stylesheet" href="assets/css/main.css" type="text/css">
-    <!-- Animate CSS -->
-    <link rel="stylesheet" href="assets/extras/animate.css" type="text/css">
-    <!-- Owl Carousel -->
-    <link rel="stylesheet" href="assets/extras/owl.carousel.css" type="text/css">
-    <link rel="stylesheet" href="assets/extras/owl.theme.css" type="text/css">
-    <link rel="stylesheet" href="assets/extras/settings.css" type="text/css">
-    <!-- Responsive CSS Styles -->
-    <link rel="stylesheet" href="assets/css/responsive.css" type="text/css">
-        <!-- Bootstrap Select -->
-    <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">  
-    
   </head>
 
-  <body>  
+  <body>
     <!-- Header Section Start -->
-    <div class="header">    
-      <nav class="navbar navbar-default main-navigation" role="navigation">
-        <div class="container">
-          <div class="navbar-header">
-            <!-- Stat Toggle Nav Link For Mobiles -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <!-- End Toggle Nav Link For Mobiles -->
-            <a class="navbar-brand logo" href="index.html"><img src="assets/img/logo.png" alt=""></a>
-          </div>
-          <!-- brand and toggle menu for mobile End -->
+    <div class="header">
+                <nav class="navbar navbar-default main-navigation" role="navigation">
+                  <div class="container">
+                    <div class="navbar-header">
+                      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                      </button>
+                      <a class="navbar-brand logo" href="index.php"><img src="assets/img/w_logo.png" width="60px" height="60px" alt=""></a>
+                    </div>
 
-          <!-- Navbar Start -->
-          <div class="collapse navbar-collapse" id="navbar">
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="login.html"><i class="lnr lnr-enter"></i> Login</a></li>
-              <li><a href="signup.html"><i class="lnr lnr-user"></i> Signup</a></li>
-              <li class="postadd">
-                <a class="btn btn-danger btn-post" href="post-ads.html"><span class="fa fa-plus-circle"></span> Post an Ad</a>
-              </li>
-            </ul>
-          </div>
-          <!-- Navbar End -->
-        </div>
-      </nav>
-      <!-- Off Canvas Navigation -->
-      <div class="navmenu navmenu-default navmenu-fixed-left offcanvas"> 
-      <!--- Off Canvas Side Menu -->
-        <div class="close" data-toggle="offcanvas" data-target=".navmenu">
-            <i class="fa fa-close"></i>
-        </div>
-          <h3 class="title-menu">All Pages</h3>
-          <ul class="nav navmenu-nav"> <!--- Menu -->
-            <li><a href="index.html">Home</a></li>
-            <li><a href="index-v-2.html">Home Page V2</a></li>
-            <li><a href="about.html">About us</a></li>            
-            <li><a href="category.html">Category</a></li>             
-            <li><a href="ads-details.html">Ads details</a></li>    
-            <li><a href="pricing.html">Pricing Tables</a></li>    
-            <li><a href="account-archived-ads.html">Account archived</a></li>
-            <li><a href="account-close.html">Account-close</a></li>
-            <li><a href="account-favourite-ads.html">Favourite ads</a></li>
-            <li><a href="account-home.html">Account home</a></li>
-            <li><a href="account-myads.html">Account myads</a></li>
-            <li><a href="account-pending-approval-ads.html">pending approval</a></li>
-            <li><a href="account-saved-search.html">saved search</a></li> 
-            <li><a href="post-ads.html">Post ads</a></li> 
-            <li><a href="posting-success.html">Posting-success</a></li>  
-            <li><a href="blog.html">Blogs</a></li>
-            <li><a href="blog-details.html">Blog Details</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="forgot-password.html">Forgot-password</a></li>
-            <li><a href="faq.html">Faq</a></li>
-            <li><a href="signup.html">Signup</a></li>
-        </ul><!--- End Menu -->
-      </div> <!--- End Off Canvas Side Menu -->
-      <div class="tbtn wow pulse" id="menu" data-wow-iteration="infinite" data-wow-duration="500ms" data-toggle="offcanvas" data-target=".navmenu">
-        <p><i class="fa fa-file-text-o"></i> All Pages</p>
-      </div>
+                          <ul class="nav navbar-nav top-nav-text" style="font-family: 'Ubuntu',sans-serif; text-transform: uppercase; font-weight: 500; font-size: 40px;">
+                            <li class="active"><a href="view_profile.php">Profile</a></li>
+                            <li><a href="myjobs.php">My Jobs</a></li>
+                            <li><a href="applied_jobs.php">Applied Jobs</a></li>
+                            <li><a href="messages.php">Messages</a></li>
+                          </ul>
+                    <div class="collapse navbar-collapse" id="navbar">
+                      <ul class="nav navbar-nav navbar-right">
+                        <li class="postadd">
+                          <a class="btn btn-common btn-text" href="post-job.php"><span class="fa fa-plus-circle"></span> Post an Ad</a>
+                        </li>
+                        <li><a href="payment.php"><i class="fa fa-credit-card"></i> Balance: <?php echo $balance;?></a></li>
+                        <li><a href="logout.php"><i class="lnr lnr-user"></i> Logout</a></li>
+                        
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
     </div>
     <!-- Header Section End -->
-
+    <!-- Enter your code here -->
     <!-- Page Header Start -->
-    <div class="page-header" style="background: url(assets/img/banner2.jpg);">
-      <div class="container">
-        <div class="row">         
-          <div class="col-md-12">
+    
+    <!-- Content section Start -->
+    <div class="container" style="margin-top: 50px;">
+<h1 class="text-center">Job posted successuflly</h1>  <br>
+<center></center><a href="account-home.php"><button class="btn btn-common btn-search btn-block text-center" style="width: 100px;"><strong class="btn-text">Home</strong></button></a></center>
+</div>
+
+    <!-- Start intro section -->
+
+
+    <!-- Close your code here-->
+ <footer>
+      <!-- Footer Area Start -->
+      <section class="footer-Content">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12 wow fadeIn" data-wow-delay="0">
+              <div class="widget">
+                <h3 class="block-title">About us</h3>
+                <div class="textwidget">
+                  <img src="assets/img/logo.png" width="40px" height="40px">
+                  <p>WeWork is a new Job Portal platform that helps you find work from!</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 wow fadeIn" data-wow-delay="0.5">
+              <div class="widget">
+                <h3 class="block-title">Quik Links</h3>
+                <ul class="menu">
+                  <li><a href="index.php">Home</a></li>
+                  <li><a href="about.php">About</a></li>
+                  <li><a href="tnc.php">Terms of Use</a></li>
+                  <li><a href="privacy.php">Privacy Policy</a></li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div class="footer-widget social-widget">
+              <h3 class="block-title">Follow us on</h3>
+              <ul>
+                <li><a href="#"><i class="fa fa-facebook-official"></i>Facebook</a></li>
+                <li><a href="#"><i class="fa fa-twitter-square"></i>Twitter</a></li>
+                <li><a href="#"><i class="fa fa-google-plus-square"></i>Google+</a></li>
+              </ul>
+            </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <!-- Footer area End -->
+
+      <!-- Copyright Start  -->
+      <div id="copyright">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="site-info pull-left">
+                <p>Designed by WeWork.com</p>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Page Header End --> 
-
-    <!-- Content section Start --> 
-    <section id="content">
-      <div class="container">
-          <div class="row text-center">
-              <div class="error-page">
-                <h2><a rel="nofollow" href="https://rebrand.ly/gg-classix-purchase/">You are Using Free Version!</br> Purchase Full Version to Get All Pages and Features</a></h2>
-                <a rel="nofollow" href="https://rebrand.ly/gg-classix-purchase/" class="btn btn-danger btn-lg">Purchase Now</a>
-            </div>
-          </div>
-      </div>
-    </section>
-    <!-- Content section End --> 
-    
-   <!-- Footer Section Start -->
-    <footer>
-    	<!-- Footer Area Start -->
-    	<section class="footer-Content">
-    		<div class="container">
-    			<div class="row">
-    				<div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="widget">
-                <h3 class="block-title">About</h3>
-                <div class="textwidget">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque lobortis tincidunt est, et euismod purus suscipit quis. Etiam euismod ornare elementum. Sed ex est, consectetur eget facilisis sed, auctor ut purus.</p>
-                </div>
-              </div>
-            </div>
-    				<div class="col-md-3 col-sm-6 col-xs-12">
-    					<div class="widget">
-    						<h3 class="block-title">Links</h3>
-  							<ul class="menu">
-                  <li><a href="#">Home</a></li>
-                  <li><a href="#">Categories</a></li>
-                  <li><a href="#">FAQ</a></li>
-                  <li><a href="#">Left Sidebar</a></li>
-                  <li><a href="#">Pricing Plans</a></li>
-                  <li><a href="#">About</a></li>
-                  <li><a href="#">Contact</a></li>
-                  <li><a href="#">Full Width Page</a></li>
-                  <li><a href="#">Notifications</a></li>
-                </ul>
-    					</div>
-    				</div>
-    				<div class="col-md-3 col-sm-6 col-xs-12">
-    					<div class="widget">
-                <h3 class="block-title">Latest Tweets</h3>
-                <div class="twitter-content clearfix">
-                  <ul class="twitter-list">
-                    <li class="clearfix">
-                      <span>
-                        Make sure you are following
-                        <a href="#">@Graygrids</a> for all your Wingthemes needs! 
-                      </span>
-                    </li>
-                    <li class="clearfix">
-                      <span>
-                        Eight marketplaces, one Graygrids Market. Join us: 
-                        <a href="#">http://t.co/cLo2w7rWOx</a>
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-    				</div>
-    				<div class="col-md-3 col-sm-6 col-xs-12">
-    					<div class="widget">
-    						<h3 class="block-title">Premium Ads</h3>
-                <ul class="featured-list">
-                  <li>
-                    <img alt="" src="assets/img/featured/img1.jpg">
-                    <div class="hover">
-                      <a href="#"><span>$49</span></a>
-                    </div>
-                  </li>
-                  <li>
-                    <img alt="" src="assets/img/featured/img2.jpg">
-                    <div class="hover">
-                      <a href="#"><span>$49</span></a>
-                    </div>
-                  </li>
-                  <li>
-                    <img alt="" src="assets/img/featured/img3.jpg">
-                    <div class="hover">
-                      <a href="#"><span>$49</span></a>
-                    </div>
-                  </li>
-                  <li>
-                    <img alt="" src="assets/img/featured/img4.jpg">
-                    <div class="hover">
-                      <a href="#"><span>$49</span></a>
-                    </div>
-                  </li>
-                  <li>
-                    <img alt="" src="assets/img/featured/img5.jpg">
-                    <div class="hover">
-                      <a href="#"><span>$49</span></a>
-                    </div>
-                  </li>
-                  <li>
-                    <img alt="" src="assets/img/featured/img6.jpg">
-                    <div class="hover">
-                      <a href="#"><span>$49</span></a>
-                    </div>
-                  </li>
-                </ul> 						
-    					</div>
-    				</div>
-    			</div>
-    		</div>
-    	</section>
-    	<!-- Footer area End -->
-    	
-    	<!-- Copyright Start  -->
-    	<div id="copyright">
-    		<div class="container">
-    			<div class="row">
-    				<div class="col-md-12">
-              <div class="site-info pull-left">
-                <p>All copyrights reserved @ 2016 - Design & Development by <a rel="nofollow" href="http://graygrids.com">Graygrids</a></p>
-              </div>    					
-              <div class="bottom-social-icons social-icon pull-right">  
-                <a class="facebook" target="_blank" href="https://web.facebook.com/GrayGrids"><i class="fa fa-facebook"></i></a> 
-                <a class="twitter" target="_blank" href="https://twitter.com/GrayGrids"><i class="fa fa-twitter"></i></a>
-                <a class="dribble" target="_blank" href="https://dribbble.com/"><i class="fa fa-dribbble"></i></a>
-                <a class="flickr" target="_blank" href="https://www.flickr.com/"><i class="fa fa-flickr"></i></a>
-                <a class="youtube" target="_blank" href="https://youtube.com"><i class="fa fa-youtube"></i></a>
-                <a class="google-plus" target="_blank" href="https://plus.google.com"><i class="fa fa-google-plus"></i></a>
-                <a class="linkedin" target="_blank" href="https://www.linkedin.com/"><i class="fa fa-linkedin"></i></a>
-              </div>
-    				</div>
-    			</div>
-    		</div>
-    	</div>
-    	<!-- Copyright End -->
+      <!-- Copyright End -->
 
     </footer>
-    <!-- Footer Section End -->  
+    <!-- Footer Section End -->
 
     <!-- Go To Top Link -->
     <a href="#" class="back-to-top">
       <i class="fa fa-angle-up"></i>
     </a>
-      
+
     <!-- Main JS  -->
-    <script type="text/javascript" src="assets/js/jquery-min.js"></script>      
+    <script type="text/javascript" src="assets/js/jquery-min.js"></script>
     <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="assets/js/material.min.js"></script>
     <script type="text/javascript" src="assets/js/material-kit.js"></script>
@@ -272,6 +198,8 @@
     <script type="text/javascript" src="assets/js/jquery.counterup.min.js"></script>
     <script type="text/javascript" src="assets/js/waypoints.min.js"></script>
     <script type="text/javascript" src="assets/js/jasny-bootstrap.min.js"></script>
-    
+        <script src="assets/js/bootstrap-select.min.js"></script>
+
+
   </body>
 </html>

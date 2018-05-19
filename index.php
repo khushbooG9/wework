@@ -1,3 +1,14 @@
+<!--This page is for index screen-->
+<!-- Created and Designed by Malhar Ujawane-->
+<?php
+session_start();
+  if(isset($_SESSION['login-status']) == 1) {
+         header("location: account-home.php");
+  }
+
+  include("config.php");
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,6 +18,10 @@
       <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>WeWork</title>
       <link rel="shortcut icon" href="assets/img/favicon.png">
+      <!-- Start WOWSlider.com HEAD section -->
+      <link rel="stylesheet" type="text/css" href="engine1/style.css" />
+      <script type="text/javascript" src="engine1/jquery.js"></script>
+      <!-- End WOWSlider.com HEAD section -->
       <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
@@ -22,6 +37,8 @@
       <link rel="stylesheet" href="assets/css/slicknav.css" type="text/css">
       <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
       <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
       <link rel="apple-touch-icon" sizes="57x57" href="assets/fav/apple-icon-57x57.png">
       <link rel="apple-touch-icon" sizes="60x60" href="assets/fav/apple-icon-60x60.png">
       <link rel="apple-touch-icon" sizes="72x72" href="assets/fav/apple-icon-72x72.png">
@@ -39,6 +56,7 @@
       <meta name="msapplication-TileColor" content="#ffffff">
       <meta name="msapplication-TileImage" content="assets/fav/ms-icon-144x144.png">
       <meta name="theme-color" content="#ffffff">
+
   </head>
 
   <body>
@@ -57,17 +75,16 @@
                     </div>
 
                           <ul class="nav navbar-nav top-nav-text" style="font-family: 'Ubuntu',sans-serif; text-transform: uppercase; font-weight: 500; font-size: 40px;">
-                            <li class="active"><a href="index.html">Home</a></li>
-                            <li><a href="resume.html">About</a></li> 
-                            <li><a href="resume.html">How It Works</a></li> 
-                            <li><a href="resume.html">Contact</a></li> 
+                            <li class="active"><a href="index.php">Home</a></li>
+                            <li><a href="about.php">About</a></li> 
+                            <li><a href="howitworks.php">How It Works</a></li> 
                           </ul>
                     <div class="collapse navbar-collapse" id="navbar">
                       <ul class="nav navbar-nav navbar-right">
                         <li><a href="login.php"><i class="lnr lnr-enter"></i> Login</a></li>
                         <li><a href="signup.php"><i class="lnr lnr-user"></i> Signup</a></li>
                         <li class="postadd">
-                          <a class="btn btn-common btn-text" href="post-job.php"><span class="fa fa-plus-circle"></span> Post an Ad</a>
+                          <a class="btn-yellow btn btn-common btn-text" href="post-job.php"><span class="fa fa-plus-circle"></span> Post an Ad</a>
                         </li>
                       </ul>
                     </div>
@@ -75,35 +92,46 @@
                 </nav>
     </div>
     <!-- Header Section End -->
+    <!-- Start WOWSlider.com BODY section -->
+<div id="wowslider-container1">
+<div class="ws_images"><ul>
+    <li><img src="data1/images/3.jpg" alt="3" title="3" id="wows1_0"/></li>
+    <li><img src="data1/images/1.jpg" alt="slideshow javascript" title="1" id="wows1_1"/></li>
+    <li><img src="data1/images/2.jpg" alt="2" title="2" id="wows1_2"/></li>
+  </ul></div>
+  
+</div>
+</div>
+<div class="ws_shadow"></div>
+</div>  
+<script type="text/javascript" src="engine1/wowslider.js"></script>
+<script type="text/javascript" src="engine1/script.js"></script>
+<!-- End WOWSlider.com BODY section -->
+    <!--<div class=" splash-image">
+      <img src="assets/img/bg-home.jpg">
+      <h1 class="home-bg text-center" style="margin-left:-400px; margin-top: -550px; color: white; font-family: Poppins, sans-serif; font-size: 70px;"><b>
+        Welcome to WeWork!</b>
+      </h1>
+      <p>
+        We start with what you want to achieve with your life. Then we draft a business plan of your financial future that align with your core values, your specific aims and your deepest desires. We help you achieve growth, while providing thorough advice that you can trust.
+      </p>
+    </div>-->
 
     <!-- Start intro section -->
     <section id="intro" class="section-intro">
           <div class="overlay">
             <div class="container">
               <div class="main-text">
-                <h1 class="intro-title">Welcome To WeWork</h1>
-                <p class="sub-title">Post jobs, get jobs. It's that easy!</p>
+                <!--<h1 class="intro-title">Welcome To WeWork</h1>-->
+                <h1 class="intro-title" style="margin-bottom: 45px;">Post jobs, get jobs. It's that easy!</h1>
 
                 <!-- Start Search box -->
                 <div class="row search-bar">
                   <div class="advanced-search">
                     <form class="search-form" method="get">
-                      <div class="col-md-3 col-sm-6 search-col">
-                        <div class="input-group-addon search-category-container" >
-                          <label class="styled-select" >
-                            <select class="dropdown-product selectpicker" name="product-cat" style="border-radius: 35px;">
-                              <option value="0">All Categories</option>
-                              <option class="subitem" value="community"> Community</option>
-                              <option value="items-for-sale"> Items For Sale</option>
-                              <option value="jobs"> Jobs</option>
-                              <option value="personals"> Personals</option>
-                              <option value="training"> Training</option>
-                              <option value="real_estate"> Real Estate</option>
-                              <option value="services"> Services</option>
-                              <option value="vehicles"> Vehicles</option>
-                            </select>
-                          </label>
-                        </div>
+                      <div class="col-md-6 col-sm-6 search-col">
+                        <input class="form-control keyword" name="keyword" value="" placeholder="Enter Keyword" type="text">
+                        <i class="fa fa-search"></i>
                       </div>
                       <div class="col-md-3 col-sm-6 search-col">
                         <div class="input-group-addon search-category-container">
@@ -119,12 +147,6 @@
                             </select>
                           </label>
                         </div>
-
-
-                      </div>
-                      <div class="col-md-3 col-sm-6 search-col">
-                        <input class="form-control keyword" name="keyword" value="" placeholder="Enter Keyword" type="text">
-                        <i class="fa fa-search"></i>
                       </div>
                       <div class="col-md-3 col-sm-6 search-col">
                         <button class="btn btn-common btn-search btn-block"><strong class="btn-text">Search</strong></button>
@@ -138,7 +160,7 @@
           </div>
     </section>
     <!-- end intro section -->
-   
+    
 
 
 
@@ -235,6 +257,9 @@
         </div>
         </div>
       </section>
+
+      
+      <!-- Dummy container starts-->
       <div class="container"> 
         <div class="section cta cta-two text-center">
         <div class="row">
@@ -275,7 +300,8 @@
       </div>
     </div>
     </div>
-   
+    <!-- Dummy section ends -->
+
 
     <!-- Footer Section Start -->
     <footer>
@@ -296,12 +322,10 @@
     					<div class="widget">
     						<h3 class="block-title">Quik Links</h3>
   							<ul class="menu">
-                  <li><a href="#">Home</a></li>
-                  <li><a href="#">Categories</a></li>
-                  <li><a href="#">About</a></li>
-                  <li><a href="#">Contact</a></li>
-                  <li><a href="#">Terms of Use</a></li>
-                  <li><a href="#">Privacy Policy</a></li>
+                  <li><a href="index.php">Home</a></li>
+                  <li><a href="about.php">About</a></li>
+                  <li><a href="tnc.php">Terms of Use</a></li>
+                  <li><a href="privacy.php">Privacy Policy</a></li>
                 </ul>
     					</div>
     				</div>

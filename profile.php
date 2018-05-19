@@ -1,66 +1,55 @@
-<?php 
-  session_start();
-  if(isset($_SESSION['login-status'])!= 1) {
-         echo ("Please login");
-         header("location: login.php");
-  }
-
-
+ 
+<?php
   include("ConnectToAWS.php");
-  $userid=$_SESSION['user_id'];
-
-$sql2="SELECT balance FROM user where id='$userid'"; 
-$balance = mysqli_query($db,$sql2)->fetch_object()->balance;
-  $error = "";
+  session_start();
+  
+  
   if($_SERVER["REQUEST_METHOD"] == "POST") {
       
-      $poster_id = $_SESSION['user_id'];
-      $title = $_POST['title'];
-      $description = $_POST['description']; 
-      $category_id = $_POST['category'];
-      $type = $_POST['job-type']; 
-      $city_id = $_POST['location'];
-
-      
-
-      //$jobcategory = "1";
-    //  $jobtype="b";
-      //$location = "New York";
-      $comments = $_POST['comments']; 
-      $wage = $_POST['credits'];
-
-
-       $sql = "INSERT INTO job (poster_id, title, description, category_id, type, city_id, comments, wage) VALUES ('".$poster_id."', '".$title."', '".$description."', '".$category_id."', '".$type."', '".$city_id."', '".$comments."', '".$wage."')";
+      $firstname = $_POST['firstname'];
+      $lastname = $_POST['lastname'];
+      $dob = $_POST['dob']; 
+      $nationality = $_POST['nationality'];
+      $gender = $_POST['gender'];
+      $address1 = $_POST['address1'];
+      $address2 = $_POST['address2'];
+      $city = $_POST['city'];
+      $zip = $_POST['zip'];
+      $skills = $_POST['skills'];
+      $language = $_POST['language'];
+      $sql = "INSERT INTO wework.user_detail (first_name, last_name, date_of_birth, nationality, gender, street, apartment, city_id, zipcode, skills, languages) VALUES ('$firstname', '$lastname', '$dob', '$nationality', '$gender', '$address1', '$address2', '$city', '$zip', '$skills', '$language')";
       $result = mysqli_query($db,$sql);
-      //if the above command doesnt work try the one below 
-      //$sql = "INSERT INTO job1 (jobtitle, jobdescription, jobcategory, jobtype, location, comments, credits) VALUES ('$jobtitle', '$jobdescription', '$jobcategory', '$jobtype', '$location', '$comments', '$credits')";
-      if (!$result) {
-      printf("Error: %s\n", mysqli_error($db));
-      exit();
-      }
-      else{
-        header("location: posting-success.php");
-      }
-      //$row = mysqli_fetch_array($result,MYSQLI_ASSOC);
-      //$active = $row['active'];
-      
-      //$count = mysqli_num_rows($result);
-      
-      // If result matched $myusername and $mypassword, table row must be 1 row
-      
-      
+      $sql2="SELECT max(id) as last from user_detail"; 
+      $user_detail_id = mysqli_query($db,$sql2)->fetch_object()->last;
+      $_SESSION['user_detail_id']=$user_detail_id;
+      $userid=$_SESSION['user_id'];
+      $sql3="UPDATE user SET user_detail_id = '$user_detail_id' WHERE id = '$userid'";
+      $result3=mysqli_query($db,$sql3);
+      $userid=$_SESSION['user_id'];
+      header("location: account-home.php");
    }
-
- ?>
+?>   
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Clasified">
+    <meta name="generator" content="Wordpress! - Open Source Content Management">
+    <title>Profile | WeWork</title>
+
+     <meta charset="UTF-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>Post Job | WeWork</title>
+    <title>WeWork</title>
       <link rel="shortcut icon" href="assets/img/favicon.png">
+      <!-- Start WOWSlider.com HEAD section -->
+      <link rel="stylesheet" type="text/css" href="engine1/style.css" />
+      <script type="text/javascript" src="engine1/jquery.js"></script>
+      <!-- End WOWSlider.com HEAD section -->
       <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
@@ -76,6 +65,8 @@ $balance = mysqli_query($db,$sql2)->fetch_object()->balance;
       <link rel="stylesheet" href="assets/css/slicknav.css" type="text/css">
       <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
       <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
       <link rel="apple-touch-icon" sizes="57x57" href="assets/fav/apple-icon-57x57.png">
       <link rel="apple-touch-icon" sizes="60x60" href="assets/fav/apple-icon-60x60.png">
       <link rel="apple-touch-icon" sizes="72x72" href="assets/fav/apple-icon-72x72.png">
@@ -87,12 +78,16 @@ $balance = mysqli_query($db,$sql2)->fetch_object()->balance;
       <link rel="apple-touch-icon" sizes="180x180" href="assets/fav/apple-icon-180x180.png">
       <link rel="icon" type="image/png" sizes="192x192"  href="assets/fav/android-icon-192x192.png">
       <link rel="icon" type="image/png" sizes="32x32" href="assets/fav/favicon-32x32.png">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
+
       <link rel="icon" type="image/png" sizes="96x96" href="assets/fav/favicon-96x96.png">
       <link rel="icon" type="image/png" sizes="16x16" href="assets/fav/favicon-16x16.png">
       <link rel="manifest" href="assets/fav/manifest.json">
       <meta name="msapplication-TileColor" content="#ffffff">
       <meta name="msapplication-TileImage" content="assets/fav/ms-icon-144x144.png">
       <meta name="theme-color" content="#ffffff">
+
   </head>
 
   <body>
@@ -109,31 +104,34 @@ $balance = mysqli_query($db,$sql2)->fetch_object()->balance;
                       </button>
                       <a class="navbar-brand logo" href="index.php"><img src="assets/img/w_logo.png" width="60px" height="60px" alt=""></a>
                     </div>
-
-                          <ul class="nav navbar-nav top-nav-text" style="font-family: 'Ubuntu',sans-serif; text-transform: uppercase; font-weight: 500; font-size: 40px;">
-                          <li class="active"><a href="a href="account-settings.php">Profile</a></li>
-                            <li><a href="account-mypostedjobs.php">Posted Jobs</a></li>
-                            <li><a href="account-myacceptedjobs.php">Accepted Jobs</a></li>
-                            <li><a href="#">Messages</a></li>
+ <ul class="nav navbar-nav top-nav-text" style="font-family: 'Ubuntu',sans-serif; text-transform: uppercase; font-weight: 500; font-size: 40px;">
+                            <li class="active"><a href="index.php">Home</a></li>
+                            <li><a href="about.php">About</a></li> 
+                            <li><a href="howitworks.php">How It Works</a></li> 
+                            <li><a href="#">Contact</a></li> 
                           </ul>
-                    <div class="collapse navbar-collapse" id="navbar">
+                          
+                    <!-- <div class="collapse navbar-collapse" id="navbar">
                       <ul class="nav navbar-nav navbar-right">
-                        <li><a href="payment.php"><i class="fa fa-credit-card"></i> Balance: <?php echo $balance;?></a></li>
-                        <li><a href="signup.php"><i class="lnr lnr-user"></i>Logout</a></li>
+                        <li><a href="login.php"><i class="lnr lnr-enter"></i> Login</a></li>
+                        <li><a href="signup.php"><i class="lnr lnr-user"></i> Signup</a></li>
+                        <li class="postadd">
+                          <a class="btn btn-common btn-text" href="post-job.php"><span class="fa fa-plus-circle"></span> Post an Ad</a>
+                        </li>
                       </ul>
-                    </div>
+                    </div> -->
                   </div>
                 </nav>
     </div>
     <!-- Header Section End -->
-    <!-- Enter your code here -->
+
     <!-- Page Header Start -->
     <div class="page-header" style="background: url(assets/img/banner1.jpg);">
       <div class="container">
         <div class="row">
           <div class="col-md-12">
             <div class="breadcrumb-wrapper">
-              <h2 class="page-title">Post your Job</h2>
+              <h2 class="page-title">Profile</h2>
             </div>
           </div>
         </div>
@@ -144,52 +142,71 @@ $balance = mysqli_query($db,$sql2)->fetch_object()->balance;
     <!-- Content section Start -->
     <section id="content">
       <div class="container">
-        <div class="row">
-            <div class="col-md-8">
+      <h1 class="text-center" style="margin-top: 20px; margin-bottom: 45px;">Hello Please Enter Your Information</h1>
+
+        <div class="row" >
+          <div class="col-md-6 col-md-6"></div>
+       
             <div class="page-login-form box">
-              <h2><center>
-                Post your Job
-              </center></h2>
+              
               <form role="form" class="login-form" action="" method="POST">
                 <div class="form-group">
                   <div class="input-icon">
                     <i class="icon fa fa-briefcase"></i>
-                    <input type="text" id="title" class="form-control" name="title" placeholder="Job Title*">
+                    <input type="text" id="firstname" class="form-control" name="firstname" placeholder="First Name*" required="required">
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="input-icon">
-                    <i class="icon fa fa-align-justify"></i>
-                    <input type="text" id="description" class="form-control" name="description" placeholder="Job description*">
+                    <i class="icon fa fa-briefcase"></i>
+                    <input type="text" id="lastname" class="form-control" name="lastname" placeholder="Last Name*" required="required">
                   </div>
                 </div>
                 <div class="form-group">
-                    <select id="category" name="category" class="form-control">
-                      <option value="jobcategory">Job Category</option>
-                      <option value="1"> Accounting/Finance </option>
-                      <option value="2"> Education/Training </option>
-                      <option value="3"> Engineer/Architects </option>
-                      <option value="4"> Garments/Textile </option>
-                      <option value="5"> HR/Org. Development </option>
-                      <option value="6"> Design/Creative </option>
-                      <option value="7"> Research/Consultancy </option>
-                      <option value="8"> Medical/Pharma </option>
-                      <option value="9"> Music/Arts </option>
-                      <option value="10">  Marketing/Sales </option>
-                      <option value="11">  Production/Operation </option>
-                      <option value="12">  Miscellaneous </option>
-                    </select>
+                  <div class="input-icon">
+                    <i class="fa fa-birthday-cake"></i>
+                    <input type="Date" id="dob" class="form-control" name="dob" placeholder="Date of Birth*" required="required">
                   </div>
+                </div>
                 <div class="form-group">
-                    <select name="job-type" id="job-type" class="form-control">
-                      <option value="jobtype">Job Type</option>
-                      <option value="part-time">Part-Time</option>
-                      <option value="full-time">Full-Time</option>
-                      <option value="student">Student</option>
-                    </select>
+                  <div class="input-icon">
+                    <i class="fa fa-compass"></i>
+                    <input type="text" id="nationality" class="form-control" name="nationality" placeholder="Nationality*" required="required">
                   </div>
-                        <div class="form-group">
-                            <select  name="location" id="location" class="form-control" >
+              </div>
+              <div class="form-group">
+                    <div class="input-icon">
+                      <select name="gender" class="form-control">
+                        <option value="I CHOOSE NOT TO DISCLOSE">Gender</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="MALE">Male</option>
+                        <option value="OTHER">Others</option>
+                      </select>
+                    </div>
+              </div>
+            
+              
+                
+                  <div class="form-group">
+                 
+                    <div class="input-icon">
+                    <i class="fa fa-map-signs"></i>
+                    <input type="text" id="stradd" class="form-control" name="address1" placeholder="Street Address Line 1*" required="required">
+                 
+                </div>
+              </div>
+                <div class="form-group">
+              
+                    <div class="input-icon">
+                    <i class="fa fa-map-marker"></i>
+                    <input type="text" id="appnum" class="form-control" name="address2" placeholder="Street Address Line 2" >
+                
+                </div>
+              </div>
+                <div class="form-group">
+                  
+                    <div class="input-icon">
+                    <select  name="city" id="city" class="form-control" >
                               <option value="1">Albany NY</option>
                               <option value="2"> ALLEGANY  NY</option>
                               <option value="3"> BROOME  NY </option>
@@ -251,63 +268,41 @@ $balance = mysqli_query($db,$sql2)->fetch_object()->balance;
                               <option value="59">  Syracuse  NY</option>
                               <option value="60">  Washington  DC</option>
                             </select>
-                        </div>
-                    
-                      <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-comment-o"></i>
-                    <input type="text" id="comments" class="form-control" name="comments" placeholder="Comments">
-                  </div>
+                
                 </div>
-
-                 <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-dollar"></i>
-                    <input type="text" id="credits" class="form-control" name="credits" placeholder="Job Credit*">
-                  </div>
+              </div>
+                
+                <div class="form-group">
+                  
+                    <div class="input-icon">
+                      <i class="fa fa-map-pin"></i>
+                      <input type="text" id="zip" class="form-control" name="zip" placeholder="Zipcode*" required="required">
+                  
+                     </div>
                 </div>
-                  </div>
+                <div class="form-group">
+                  
+                    <div class="input-icon">
+                      <i class="fas fa-industry"></i>
+                      <input type="text" id="skill" class="form-control" name="skills" placeholder="Skills">
+                     </div>
+                </div>
+                <div class="form-group">
+                  
+                    <div class="input-icon">
+                      <i class="fas fa-language"></i>
+                      <input type="text" id="lang" class="form-control" name="language" placeholder="Languages">
+                     </div>
+                </div>
                   <br>
                 <button class="btn btn-common log-btn">Submit</button>
               </form>
             </div>
-          
-        <!-- Rules part -->
-          <div class="col-md-4">
-            <div class="page-login-form box">
-              <h3>
-                Quick Rules
-              </h3>
-              <br>
-              <h4> Posting an ad on wework.com is free!</h4>
-              <h4>However, all ads must follow our rules: </h4><br>
-              <h5>
-                <p> > Make sure you post in the correct category.</p>
-                <p> > Do not post the same ad more than once or repost an ad within 48 hours</p>
-                <p> > Do not pictures without watermarks </p>
-                <p> > Do not post ads containing multiple items unless its a package deal </p>
-                <p> > Do not put your email or phone numbers in the title or description </p>
-                <p> > Do not post the ad more than once or repost an ad within 48 hours.</p>
-                <p> > Make sure the job is posted within the legal terms</p>
-                <p> > Assign credits inaccordance to job difficulty </p>
-              </h5>
+          </div>
         </div>
       </div>
+    </section>
       </section>
-     
-   
-     <!---helloooo herreeee -->
-
-
-      
-   
-
-    
-         
-      
-
-
-    <!-- Content section End -->
 
     <!-- Close your code here-->
     <!-- Footer Section Start -->

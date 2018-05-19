@@ -1,46 +1,12 @@
-<?php
-  session_start();
-  include("ConnectToAWS.php");
-  $error = "";
-  $username="";
-  $email="";
-  $text="";
-  $password="";
-   if($_SERVER["REQUEST_METHOD"] == "POST") {
-      // username and password sent from form 
-      
-      $email = $_POST['email']; 
-      $password = $_POST['password'];
-      
-      $sql = "INSERT INTO user (email, password, balance, rating, user_detail_id) VALUES ('$email','$password',100,0,0)";
-      $sql2 = "SELECT id FROM wework.user where email = '$email'";
-      $result = mysqli_query($db,$sql);
-      $user_id = mysqli_query($db,$sql2)->fetch_object()->id;
-      if(!$result)
-      {
-         $_SESSION['login-status'] = 0;
-      }
-      else
-      {
-        $_SESSION['login-status'] = 1;
-        $_SESSION['user_id'] = $user_id;
-        header("location: profile.php");
-      }
-   }
-?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+      <meta charset="UTF-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>WeWork</title>
       <link rel="shortcut icon" href="assets/img/favicon.png">
-      <!-- Start WOWSlider.com HEAD section -->
-      <link rel="stylesheet" type="text/css" href="engine1/style.css" />
-      <script type="text/javascript" src="engine1/jquery.js"></script>
-      <!-- End WOWSlider.com HEAD section -->
       <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
@@ -56,8 +22,6 @@
       <link rel="stylesheet" href="assets/css/slicknav.css" type="text/css">
       <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
       <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
       <link rel="apple-touch-icon" sizes="57x57" href="assets/fav/apple-icon-57x57.png">
       <link rel="apple-touch-icon" sizes="60x60" href="assets/fav/apple-icon-60x60.png">
       <link rel="apple-touch-icon" sizes="72x72" href="assets/fav/apple-icon-72x72.png">
@@ -75,11 +39,10 @@
       <meta name="msapplication-TileColor" content="#ffffff">
       <meta name="msapplication-TileImage" content="assets/fav/ms-icon-144x144.png">
       <meta name="theme-color" content="#ffffff">
-
   </head>
 
   <body>
-   <!-- Header Section Start -->
+    <!-- Header Section Start -->
     <div class="header">
                 <nav class="navbar navbar-default main-navigation" role="navigation">
                   <div class="container">
@@ -94,84 +57,97 @@
                     </div>
 
                           <ul class="nav navbar-nav top-nav-text" style="font-family: 'Ubuntu',sans-serif; text-transform: uppercase; font-weight: 500; font-size: 40px;">
-                            <li class="active"><a href="index.php">Home</a></li>
-                            <li><a href="about.php">About</a></li> 
-                            <li><a href="howitworks.php">How It Works</a></li> 
-                            <li><a href="#">Contact</a></li> 
+                            <li class="active"><a href="view_profile.php">Profile</a></li>
+                            <li><a href="myjobs.php">My Jobs</a></li>
+                            <li><a href="applied_jobs.php">Applied Jobs</a></li>
+                            <li><a href="messages.php">Messages</a></li>
                           </ul>
-                    <!-- <div class="collapse navbar-collapse" id="navbar">
+                    <div class="collapse navbar-collapse" id="navbar">
                       <ul class="nav navbar-nav navbar-right">
-                        <li><a href="login.php"><i class="lnr lnr-enter"></i> Login</a></li>
-                        <li><a href="signup.php"><i class="lnr lnr-user"></i> Signup</a></li>
                         <li class="postadd">
                           <a class="btn btn-common btn-text" href="post-job.php"><span class="fa fa-plus-circle"></span> Post an Ad</a>
                         </li>
+                        <li><a href="payment.php"><i class="fa fa-credit-card"></i> Balance: <?php echo $balance;?></a></li>
+                        <li><a href="logout.php"><i class="lnr lnr-user"></i> Logout</a></li>
+                        
                       </ul>
-                    </div> -->
+                    </div>
                   </div>
                 </nav>
     </div>
     <!-- Header Section End -->
+    <!-- Enter your code here -->
+  
+   <?php
+include_once "connecttoaws.php";
+session_start();
+$Payee=$_SESSION["user_id"]=1;
+$job_id=$_SESSION["job_id"]=1;
+$Payer=0;
+$sql100 = "SELECT user_id FROM wework.job_applicant where job_id='$job_id' and status='SUCCESSFUL'";
+$result100 = mysqli_query($db,$sql100);
 
+if($result100->num_rows > 0){
+  while($row = $result100->fetch_assoc()){
+    $Payer = $row["user_id"];
+  }
+}
+$sql101 = "SELECT `wage` FROM `job` where id=$job_id";
+$result101 = $db->query($sql101);
+if($result101->num_rows > 0){
+  while($row = $result101->fetch_assoc()){
+    $Payable_Coins = $row["wage"];
+  }
+}
+?>
+<form action="*.php" method="POST">
+<?php
+echo "<table>"
+  ."<tr>"
+    ."<th align='center'>"
+      ."Transaction ID"
+    ."</th>"
+    ."<th align='center'>"
+      ."Payer"
+    ."</th>"
+    ."<th align='center'>"
+      ."Payee"
+    ."</th>"
+    ."<th align='center'>"
+      ."Job ID"
+    ."</th>"
+    ."<th align='center'>"
+      ."Coins"
+    ."</th>"
+    ."<th align='center'>"
+      ."Payment Date"
+    ."</th>"
 
-    <!-- Page Header Start -->
-    <div class="page-header" style="background: url(assets/img/banner1.jpg);">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="breadcrumb-wrapper">
-              <h2 class="page-title">Join Us</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Page Header End -->
-
-    <!-- Content section Start -->
-    <section id="content">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
-            <div class="page-login-form box">
-              <h3>
-                Register
-              </h3>
-              <form role="form" class="login-form" method="POST" action="">
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-envelope"></i>
-                    <input type="text" id="sender-email" class="form-control" name="email" placeholder="Email Address" required>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-unlock-alt"></i>
-                    <input type="password" id="txt_pass" class="form-control" placeholder="Password" name="password" required>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-unlock-alt"></i>
-                    <input type="password" id = "txt_retype_pass" class="form-control" placeholder="Retype Password" required="">
-                  </div>
-                </div>
-                <div class="checkbox">
-                  <input type="checkbox" id="remember" name="rememberme" value="forever" style="float: left;" required="required">
-                  <label for="remember">By creating account you agree to our Terms & Conditions</label>
-                </div>
-                <button class="btn btn-common log-btn">Register</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Content section End -->
-
-
+  ."</tr>";
+    echo "<tr>";
+    $sql1 = "SELECT * FROM `payment_history` WHERE payer_id='$Payer'";
+    $result1 = $db->query($sql1);
+    if ($result1->num_rows > 0) {
+      // output data of each row
+        while($row = $result1->fetch_assoc()) {
+            echo  "<td>" .$row["transaction_id"]."</td>"  
+                ."<td>".$row["payer_id"]."</td>"
+                ."<td>".$row["payee_id"]."</td>"   //this will be done later, can't be done at the moment.
+                ."<td>".$row["job_id"]."</td>"   //this will be done later, can't be done at the moment.
+                ."<td>".$row["amount"]."</td>" 
+                ."<td>".$row["create_time"]."</td>";
+        }
+    }
+    //else echo "no rows";
+    $db->close();
+  ?>
+</table>
+</form>
+</body>
+</html>
+    <!-- Close your code here-->  
     <!-- Footer Section Start -->
-  <footer>
+ <footer>
       <!-- Footer Area Start -->
       <section class="footer-Content">
         <div class="container">

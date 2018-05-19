@@ -1,46 +1,59 @@
 <?php
-  session_start();
+
+session_start();
+  if($_SESSION['login-status'] != 1) {
+         alert("Please login");
+         header("location: login.php");
+  }
+$jobid="";
   include("ConnectToAWS.php");
-  $error = "";
-  $username="";
-  $email="";
-  $text="";
-  $password="";
-   if($_SERVER["REQUEST_METHOD"] == "POST") {
-      // username and password sent from form 
-      
-      $email = $_POST['email']; 
-      $password = $_POST['password'];
-      
-      $sql = "INSERT INTO user (email, password, balance, rating, user_detail_id) VALUES ('$email','$password',100,0,0)";
-      $sql2 = "SELECT id FROM wework.user where email = '$email'";
-      $result = mysqli_query($db,$sql);
-      $user_id = mysqli_query($db,$sql2)->fetch_object()->id;
-      if(!$result)
-      {
-         $_SESSION['login-status'] = 0;
-      }
-      else
-      {
-        $_SESSION['login-status'] = 1;
-        $_SESSION['user_id'] = $user_id;
-        header("location: profile.php");
-      }
-   }
+$sql2 = "SELECT * FROM `job` WHERE poster_id = '$_SESSION[user_id]' ";
+$result=mysqli_query($db,$sql2);
+$i=0;
+$return_arr = array();
+  while ($row = $result->fetch_assoc()) 
+  {
+    $row_array[$i]['jobid']=$row['id'];
+    $row_array[$i]['jobtitle'] = $row['title'];
+    $row_array[$i]['jobdescription']= $row['description'];
+    $row_array[$i]['jobcategory'] = $row['category_id'];
+    $row_array[$i]['jobtype'] = $row['type'];
+    $row_array[$i]['city_id'] = $row['city_id'];
+    $row_array[$i]['comments'] = "".$row['comments'];
+    $row_array[$i]['credits'] = $row['wage'];
+    $row_array[$i]['status'] = $row['status'];
+    array_push($return_arr, $row_array);
+    $i++;
+  }
+  if($_SERVER["REQUEST_METHOD"] == "POST") {
+    $jobid= mysqli_real_escape_string($db,$_POST['id']);
+    $status="SUCCESSFUL";
+    $sql = "UPDATE job SET status='$status' WHERE id = '$jobid' ";
+    $result1=mysqli_query($db,$sql);
+    $sql2 = "UPDATE jobapplicant SET status='$status' WHERE jobid='$jobid'";
+    $result=mysqli_query($db,$sql2);
+  }
+
+$userid=$_SESSION['user_id'];
+
+$sql2="SELECT balance FROM user where id='$userid'"; 
+$balance = mysqli_query($db,$sql2)->fetch_object()->balance;
+
+
+   
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+      <meta charset="UTF-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>WeWork</title>
       <link rel="shortcut icon" href="assets/img/favicon.png">
-      <!-- Start WOWSlider.com HEAD section -->
-      <link rel="stylesheet" type="text/css" href="engine1/style.css" />
-      <script type="text/javascript" src="engine1/jquery.js"></script>
-      <!-- End WOWSlider.com HEAD section -->
       <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
@@ -56,8 +69,6 @@
       <link rel="stylesheet" href="assets/css/slicknav.css" type="text/css">
       <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
       <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
       <link rel="apple-touch-icon" sizes="57x57" href="assets/fav/apple-icon-57x57.png">
       <link rel="apple-touch-icon" sizes="60x60" href="assets/fav/apple-icon-60x60.png">
       <link rel="apple-touch-icon" sizes="72x72" href="assets/fav/apple-icon-72x72.png">
@@ -75,11 +86,10 @@
       <meta name="msapplication-TileColor" content="#ffffff">
       <meta name="msapplication-TileImage" content="assets/fav/ms-icon-144x144.png">
       <meta name="theme-color" content="#ffffff">
-
   </head>
 
   <body>
-   <!-- Header Section Start -->
+    <!-- Header Section Start -->
     <div class="header">
                 <nav class="navbar navbar-default main-navigation" role="navigation">
                   <div class="container">
@@ -94,84 +104,93 @@
                     </div>
 
                           <ul class="nav navbar-nav top-nav-text" style="font-family: 'Ubuntu',sans-serif; text-transform: uppercase; font-weight: 500; font-size: 40px;">
-                            <li class="active"><a href="index.php">Home</a></li>
-                            <li><a href="about.php">About</a></li> 
-                            <li><a href="howitworks.php">How It Works</a></li> 
-                            <li><a href="#">Contact</a></li> 
+                            <li class="active"><a href="view_profile.php">Profile</a></li>
+                            <li><a href="myjobs.php">My Jobs</a></li>
+                            <li><a href="applied_jobs.php">Applied Jobs</a></li>
+                            <li><a href="#">Messages</a></li>
                           </ul>
-                    <!-- <div class="collapse navbar-collapse" id="navbar">
+                    <div class="collapse navbar-collapse" id="navbar">
                       <ul class="nav navbar-nav navbar-right">
-                        <li><a href="login.php"><i class="lnr lnr-enter"></i> Login</a></li>
-                        <li><a href="signup.php"><i class="lnr lnr-user"></i> Signup</a></li>
                         <li class="postadd">
                           <a class="btn btn-common btn-text" href="post-job.php"><span class="fa fa-plus-circle"></span> Post an Ad</a>
                         </li>
+                        <li><a href="payment.php"><i class="fa fa-credit-card"></i> Balance: <?php echo $balance;?></a></li>
+                        <li><a href="logout.php"><i class="lnr lnr-user"></i> Logout</a></li>
+                        
                       </ul>
-                    </div> -->
+                    </div>
                   </div>
                 </nav>
     </div>
     <!-- Header Section End -->
+    <!-- Enter your code here -->
+    <?php
+      for ($j=0; $j < $i ; $j++) {
+    ?>
 
 
-    <!-- Page Header Start -->
-    <div class="page-header" style="background: url(assets/img/banner1.jpg);">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="breadcrumb-wrapper">
-              <h2 class="page-title">Join Us</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Page Header End -->
+    <section class="job-details">
+            <div class="container bg-grey" style="margin-top: 50px; height: 250px;">
+              <div class="row">
+                <div class="col-9">
+                  <div class="row" style="margin-top: 10px; margin-left: 40px;">
+                  <div class="header-content pull-left">
+                             <h3 style="font-size: 32px; margin-top: 30px;"><a href="#"><?php echo $row_array[$j]['jobtitle']; ?></a></h3>
+                             <span><i class="fa fa-map-marker" style="margin-top:25px; font-size: 20px;"></i><?php 
+                              $cityid=$row_array[$j]['city_id'];
+                              $sql3="SELECT * FROM wework.city where id='$cityid'";
+                              $result=mysqli_query($db,$sql3);
+                              while ($row=$result->fetch_assoc()) {
+                                $city = $row['city'];
+                              }
+                              echo "<span style=\"font-size: 20px;\">".$city."</span>"; ?></span>
 
-    <!-- Content section Start -->
-    <section id="content">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
-            <div class="page-login-form box">
-              <h3>
-                Register
-              </h3>
-              <form role="form" class="login-form" method="POST" action="">
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-envelope"></i>
-                    <input type="text" id="sender-email" class="form-control" name="email" placeholder="Email Address" required>
+                           </div>
+                           </div>
+                  <div class="row" style="margin-top: 10px; margin-left: 40px;">
+                          <div class="description" style="margin-top: 25px;">
+                           <?php echo $row_array[$j]['jobdescription']; ?>
+                          </div>
                   </div>
+                  <div class="row" style="margin-top: 10px; margin-left: 40px;">
+                   <div class="col-9">
+                  
                 </div>
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-unlock-alt"></i>
-                    <input type="password" id="txt_pass" class="form-control" placeholder="Password" name="password" required>
-                  </div>
+              </div>
                 </div>
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-unlock-alt"></i>
-                    <input type="password" id = "txt_retype_pass" class="form-control" placeholder="Retype Password" required="">
-                  </div>
-                </div>
-                <div class="checkbox">
-                  <input type="checkbox" id="remember" name="rememberme" value="forever" style="float: left;" required="required">
-                  <label for="remember">By creating account you agree to our Terms & Conditions</label>
-                </div>
-                <button class="btn btn-common log-btn">Register</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Content section End -->
+                <div class="row" style="margin-top: 10px; margin-left: 40px;"> 
+                <div class="col-3">
+                  <h3 style="margin-left: 900px; margin-top: -150px;"><?php echo "Earn   "."<i class=\"fa fa-money\" style=\"margin-left:10px;\"></i>".$row_array[$j]['credits']; ?></h3>
 
-
-    <!-- Footer Section Start -->
-  <footer>
+          		    <br>
+                  <form role="form" action="delete_job.php" method="POST">
+                    <input type="hidden" value="<?php echo $row_array[$j]['jobid']; ?>">
+          		    <button class="btn btn-common" onclick="myFunction1()" style="margin-left: 850px; margin-top: 20px; margin-bottom: 55px; width: 200px;" name="jobid" value="<?php echo $row_array[$j]['jobid'] ?>">Delete</button>
+                </form>
+                <br>
+                <form role="form" action="select_applicant.php" method="POST">
+                    <input type="hidden"  value="<?php echo $row_array[$j]['jobid']; ?>">
+                  <button class="btn btn-common" onclick="myFunction1()" style="margin-left: 600px;  margin-top: -235px; width: 200px; color: #fec239;" name="jobid" value="<?php echo $row_array[$j]['jobid'] ?>">Show Applicants</button>
+                </form>
+                <br>
+                
+                </div>
+              </div>
+              
+              </div>
+              </div>
+              
+              
+              </div>
+             
+      </section>
+      <?php
+      }
+      ?>
+    
+   
+    <!-- Close your code here-->  
+ <footer>
       <!-- Footer Area Start -->
       <section class="footer-Content">
         <div class="container">

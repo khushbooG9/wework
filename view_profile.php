@@ -1,46 +1,25 @@
-<?php
-  session_start();
-  include("ConnectToAWS.php");
-  $error = "";
-  $username="";
-  $email="";
-  $text="";
-  $password="";
-   if($_SERVER["REQUEST_METHOD"] == "POST") {
-      // username and password sent from form 
-      
-      $email = $_POST['email']; 
-      $password = $_POST['password'];
-      
-      $sql = "INSERT INTO user (email, password, balance, rating, user_detail_id) VALUES ('$email','$password',100,0,0)";
-      $sql2 = "SELECT id FROM wework.user where email = '$email'";
-      $result = mysqli_query($db,$sql);
-      $user_id = mysqli_query($db,$sql2)->fetch_object()->id;
-      if(!$result)
-      {
-         $_SESSION['login-status'] = 0;
-      }
-      else
-      {
-        $_SESSION['login-status'] = 1;
-        $_SESSION['user_id'] = $user_id;
-        header("location: profile.php");
-      }
-   }
+<?php 
+session_start();
+include("ConnectToAWS.php");
+     
+
+$userid=$_SESSION['user_id'];
+$sql="SELECT * FROM user where id='$userid'"; 
+$balance = mysqli_query($db,$sql)->fetch_object()->balance;
+
+$user_detail_id = mysqli_query($db,$sql)->fetch_object()->user_detail_id;
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+      <meta charset="UTF-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>WeWork</title>
+    <title>Welcome | WeWork</title>
       <link rel="shortcut icon" href="assets/img/favicon.png">
-      <!-- Start WOWSlider.com HEAD section -->
-      <link rel="stylesheet" type="text/css" href="engine1/style.css" />
-      <script type="text/javascript" src="engine1/jquery.js"></script>
-      <!-- End WOWSlider.com HEAD section -->
       <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
       <link rel="stylesheet" href="assets/css/jasny-bootstrap.min.css" type="text/css">
@@ -56,8 +35,6 @@
       <link rel="stylesheet" href="assets/css/slicknav.css" type="text/css">
       <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
       <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
       <link rel="apple-touch-icon" sizes="57x57" href="assets/fav/apple-icon-57x57.png">
       <link rel="apple-touch-icon" sizes="60x60" href="assets/fav/apple-icon-60x60.png">
       <link rel="apple-touch-icon" sizes="72x72" href="assets/fav/apple-icon-72x72.png">
@@ -79,7 +56,8 @@
   </head>
 
   <body>
-   <!-- Header Section Start -->
+    <!-- Header Section Start -->
+    <!-- Header Section Start -->
     <div class="header">
                 <nav class="navbar navbar-default main-navigation" role="navigation">
                   <div class="container">
@@ -94,84 +72,241 @@
                     </div>
 
                           <ul class="nav navbar-nav top-nav-text" style="font-family: 'Ubuntu',sans-serif; text-transform: uppercase; font-weight: 500; font-size: 40px;">
-                            <li class="active"><a href="index.php">Home</a></li>
-                            <li><a href="about.php">About</a></li> 
-                            <li><a href="howitworks.php">How It Works</a></li> 
-                            <li><a href="#">Contact</a></li> 
+                            <li class="active"><a href="view_profile.php">Profile</a></li>
+                            <li><a href="myjobs.php">My Jobs</a></li>
+                            <li><a href="applied_jobs.php">Applied Jobs</a></li>
+                            <li><a href="#">Messages</a></li>
                           </ul>
-                    <!-- <div class="collapse navbar-collapse" id="navbar">
+                    <div class="collapse navbar-collapse" id="navbar">
                       <ul class="nav navbar-nav navbar-right">
-                        <li><a href="login.php"><i class="lnr lnr-enter"></i> Login</a></li>
-                        <li><a href="signup.php"><i class="lnr lnr-user"></i> Signup</a></li>
                         <li class="postadd">
                           <a class="btn btn-common btn-text" href="post-job.php"><span class="fa fa-plus-circle"></span> Post an Ad</a>
                         </li>
+                        <li><a href="payment.php"><i class="fa fa-credit-card"></i> Balance: <?php echo $balance;?></a></li>
+                        <li><a href="logout.php"><i class="lnr lnr-user"></i> Logout</a></li>
+                        
                       </ul>
-                    </div> -->
+                    </div>
                   </div>
                 </nav>
     </div>
     <!-- Header Section End -->
-
-
+    <!-- Enter your code here -->
     <!-- Page Header Start -->
     <div class="page-header" style="background: url(assets/img/banner1.jpg);">
       <div class="container">
         <div class="row">
           <div class="col-md-12">
             <div class="breadcrumb-wrapper">
-              <h2 class="page-title">Join Us</h2>
+              <h2 class="page-title">My Profile</h2>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Page Header End -->
+    
+    
+    </div>
+    <!--Content-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<div class = "container">
+        <div class="panel-group">
+          <div class="panel panel-default">
+            <div class="panel-body">
+           <div class="breadcrumb-wrapper">
 
-    <!-- Content section Start -->
-    <section id="content">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
-            <div class="page-login-form box">
-              <h3>
-                Register
-              </h3>
-              <form role="form" class="login-form" method="POST" action="">
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-envelope"></i>
-                    <input type="text" id="sender-email" class="form-control" name="email" placeholder="Email Address" required>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-unlock-alt"></i>
-                    <input type="password" id="txt_pass" class="form-control" placeholder="Password" name="password" required>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="input-icon">
-                    <i class="icon fa fa-unlock-alt"></i>
-                    <input type="password" id = "txt_retype_pass" class="form-control" placeholder="Retype Password" required="">
-                  </div>
-                </div>
-                <div class="checkbox">
-                  <input type="checkbox" id="remember" name="rememberme" value="forever" style="float: left;" required="required">
-                  <label for="remember">By creating account you agree to our Terms & Conditions</label>
-                </div>
-                <button class="btn btn-common log-btn">Register</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Content section End -->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Profile</title>
+</head>
+<body>
+	<table align="center" style="text-align:left;"  class="page-title">
+		<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				FIRST NAME:
+			</td>
+			<td style="font-size: 15px;text-align:right;padding:10px;font-style: italic;">
+				<?php 
+				
+$sql = "SELECT first_name FROM user_detail WHERE id='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["first_name"];
+    }
+}
+ ?>
+</td>
+ </tr>
+
+ 		<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				LAST NAME:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;font-style: italic;">
+				<?php 
+$sql = "SELECT `last_name` FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["last_name"];
+    }
+   }
+ ?>
+</td></i>
+</tr>
+<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				DATE OF BIRTH:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;font-style: italic;">
+				<?php 
+$sql = "SELECT `date_of_birth` FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["date_of_birth"];
+    }
+   }
+ ?>
+</td></i>
+</tr>
+
+<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				NATIONALITY:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;font-style: italic;">
+				<?php 
+$sql = "SELECT `nationality` FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["nationality"];
+    }
+ }
+ 
+ ?>
+</td></i>
+</tr>
+
+<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				GENDER:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;font-style: italic;">
+				<?php 
+$sql = "SELECT `gender` FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["gender"];
+   }
+    }
+ ?>
+</td></i>
+</tr>
+<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				ADDRESS:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;font-style: italic;">
+				<?php 
+
+$sql = "SELECT * FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row['apartment']." ".$row["street"];
+    }
+ ?>
+</td></i>
+</tr>
 
 
-    <!-- Footer Section Start -->
-  <footer>
+
+<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				ZIPCODE:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;">
+				<?php 
+$sql = "SELECT `zipcode` FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["zipcode"];
+    }
+ }
+ 
+ ?>
+ 
+</td></i>
+</tr>
+<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				SKILLS:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;">
+				<?php 
+$sql = "SELECT `skills` FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["skills"];
+    }
+}
+
+ ?>
+ 
+</td></i>
+</tr>
+<tr>
+			<td align="center" style="font-size: 20px; margin:10px; text-align:left; padding:10px;" border="1px" class="page-title">
+				LANGUAGES:
+			</td>
+			<i><td style="font-size: 15px;text-align:right;padding:10px;">
+				<?php 
+$sql = "SELECT `languages` FROM `user_detail` WHERE `id`='$user_detail_id'";
+$result = mysqli_query($db,$sql);
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo $row["languages"];
+    }
+}
+
+ ?>
+
+</td></i>
+</tr>
+<tr>
+	<td colspan=2>
+		<center><a href="account-home.php"><button class="btn btn-common log-btn" style="width: 400px;margin-top: 20px">Home</button></a></center>
+	</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+<!-- Footer Section Start -->
+ <footer>
       <!-- Footer Area Start -->
       <section class="footer-Content">
         <div class="container">
@@ -252,3 +387,4 @@
 
   </body>
 </html>
+
